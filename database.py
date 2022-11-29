@@ -1,6 +1,5 @@
 # Importing modules
 import os
-import secrets
 import hashlib
 import json
 
@@ -21,7 +20,6 @@ class ThunderBase:
 
         self.db_name = name
         self.password = hash.hexdigest()
-        self.db_id = secrets.token_hex(16)
 
         # Creating the directory name for the database.
         self.dirname = f"{self.db_name}+{self.password}/"
@@ -41,7 +39,6 @@ class ThunderBase:
         if not os.path.exists(self.tbdbinfo_path):
             with open(self.tbdbinfo_path, 'w') as f:
                 info_dict = {
-                    'id': self.db_id,
                     'name': self.db_name,
                     'password': self.password,
                 }
