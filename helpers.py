@@ -4,7 +4,8 @@ from database import ThunderBase
 
 # A module used for checking certain fields or requirements
 
-def isThunderBase(thunderbase:ThunderBase):
+
+def isThunderBase(thunderbase: ThunderBase):
     """Function for checking if a given ThunderBase exists."""
 
     try:
@@ -12,6 +13,7 @@ def isThunderBase(thunderbase:ThunderBase):
             return True
     except:
         return False
+
 
 def writeInfo(filepath, info):
     """Function for writing to a file."""
