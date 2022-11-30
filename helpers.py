@@ -1,7 +1,6 @@
 # Importing modules
 import os
 from database import ThunderBase
-
 # A module used for checking certain fields or requirements
 
 

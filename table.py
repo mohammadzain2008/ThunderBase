@@ -73,3 +73,66 @@ class Table:
         with open(f'{self.table_path}{record_id}.tbr', 'w') as f:
             record['id'] = record_id
             json.dump(record, f, indent=4)
+            return record['id']
+
+    # Functions for deleting a record based on a given value.
+    def delete_record_by_id(self, id: str):
+        """Deletes a record based on the given record id."""
+
+        # Checking if the record exists in directory.
+        record_path = f"{self.table_path}{id}.tbr"
+        if os.path.exists(record_path):
+            os.remove(record_path)
+            return True
+        else:
+            return False
+
+    def delete_records_by_field(self, field: dict):
+        """Deletes a single or many records based on the values provided in the given dictionary."""
+
+        # A list for stroring the name[s] of deleted records.
+        deleted_records = []
+
+        # Extracting the key[s] and value[s] provided.
+        keys = []
+        values = []
+        for key, value in field.items():
+            keys.append(key)
+            values.append(value)
+
+        # Scanning all the files in the record directory
+        directory = self.table_path
+        if not os.path.exists(directory):
+            print("NO DIR")
+            return False
+
+        # Looping through every record and skipping the info file.
+        for record_name in os.listdir(directory):
+            if record_name == 'INFO.tbtableinfo':
+                continue
+
+            record_path = os.path.join(directory, record_name)
+
+            # Opening the file and checking if key-value pairs match the given dictionary.
+            with open(record_path) as f:
+                tbr_data = json.load(f)
+
+                counter = 0
+                ans = True
+
+                while counter < len(keys):
+                    if tbr_data[keys[counter]] == values[counter]:
+                        ans *= True
+
+                    else:
+                        ans *= False
+
+                    counter += 1
+
+            # Removing the record file if ans evaluates to true.
+            if ans:
+                os.remove(record_path)
+                deleted_records.append(record_path)
+
+        # Returning the list of deleted records.
+        return deleted_records
