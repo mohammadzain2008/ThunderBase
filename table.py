@@ -6,6 +6,7 @@ import secrets
 
 from database import ThunderBase
 import helpers as cf
+import tb_errors
 
 # The class for modelling a table.
 
@@ -16,10 +17,31 @@ class Table:
     def __init__(self, thunderbase: ThunderBase, schema: dict, name='table'):
         """Initializing and checking main attributes of the table and the parent database."""
 
-        # Check if the ThunderBase exists.
-        if not cf.isThunderBase(thunderbase):
-            return False
+        # Checking the passed arguements.
 
+        # Checking if the name of the table is not empty.
+        if not name:
+            raise tb_errors.TableNameEmpty(
+                'The name of the table cannot be null or empty. It must be a string.')
+
+        # Checking if the name of the table is a string or not.
+        elif type(name) != str:
+            raise tb_errors.TableNameInvalid(
+                f'The name of the table cannot be of type {type(name)}. It must be a string.')
+
+        # Check if the ThunderBase exists.
+        elif not cf.isThunderBase(thunderbase):
+            raise tb_errors.ThunderBaseNotFound('ThunderBase not found!')
+
+        # Checking if the schema is empty or not.
+        if not schema:
+            raise tb_errors.TableSchemaEmpty(
+                'The schema of a table cannot be null or empty. It must have atleast one key-value pair.')
+
+        # Checking if the schema is a dict or not.
+        if type(schema) != dict:
+            raise tb_errors.TableSchemaInvalid(
+                f'Table schema cannot be of type {type(schema)}. It must be of type dict.')
         # Declaring main self variables
         self.thunderbase = thunderbase
         self.schema = schema
@@ -49,16 +71,33 @@ class Table:
     def add_record(self, record: dict):
         """Adds a single record to the table."""
 
+        # Checking the given record.
+        if not record:
+            raise tb_errors.TableRecordEmpty(
+                'The passed record cannot be null or empty. It must contain atleast one key-value pair.')
+        # Checking if the record is a dictionary or not.
+        if type(record) != dict:
+            raise tb_errors.TableRecordInvalid(
+                f'A record cannot be of type {type(record)}. It must be a dict.')
+
         # Getting the schema keys and the record keys for comparison.
         schema_keys = list(self.schema.keys())
         record_keys = list(record.keys())
 
         schema_length = len(schema_keys)
-        counter = 0
+        record_length = len(record_keys)
+
+        # Checking if the number of keys in both the lists are equal
+        if schema_length != record_length:
+            raise tb_errors.RecordFieldsIncorrect(
+                f'The number of keys in record ({record_length}) does not match the number of keys in the table schema ({schema_length})!')
+
         # Checking if all the keys are equal in record and schema.
+        counter = 0
         while counter < schema_length:
             if schema_keys[counter] != record_keys[counter]:
-                return False
+                raise tb_errors.RecordFieldsIncorrect(
+                    f'The record should contain the keys ({schema_keys}) but contains the keys ({record_keys})')
             counter += 1
 
         # Checking if the type of given value in the record matches the prescribed datatype in the schema.
@@ -66,7 +105,8 @@ class Table:
         record_values = [type(value) for value in record.values()]
 
         if schema_values != record_values:
-            return False
+            raise tb_errors.RecordFieldNotOfSpecifiedType(
+                f'The record field[s] do not match the datatype ({record_values}) as defined in the corresponding key in the table schema ({schema_values}). ')
 
         # Pushing the record into the table as a .tbr file
         record_id = secrets.token_hex(16)
@@ -103,8 +143,8 @@ class Table:
         # Scanning all the files in the record directory
         directory = self.table_path
         if not os.path.exists(directory):
-            print("NO DIR")
-            return False
+            raise tb_errors.TableNotFound(
+                'The table associated with the method does not exist!')
 
         # Looping through every record and skipping the info file.
         for record_name in os.listdir(directory):

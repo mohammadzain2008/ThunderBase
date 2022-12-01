@@ -3,6 +3,7 @@ import os
 import hashlib
 import json
 
+import tb_errors
 # Starting the main class
 
 
@@ -11,6 +12,26 @@ class ThunderBase:
 
     def __init__(self, name='root', password='local'):
         """Initializing main attributes of the database."""
+
+        # Adding checks to the arguements passed
+
+        # Checking the name.
+        if not name:
+            raise tb_errors.ThunderBaseNameEmpty(
+                'The name of the ThunderBase cannot be null or an empty string.')
+
+        elif type(name) != str:
+            raise tb_errors.ThunderBaseInvalidName(
+                f'The name of the ThunderBase cannot be of type {type(name)}. It must be a string.')
+
+        # Checking the password.
+        if not password:
+            raise tb_errors.ThunderBasePasswordEmpty(
+                'The password of the ThunderBase cannot be null or an empty string.')
+
+        elif type(password) != str:
+            raise tb_errors.ThunderBaseInvalidPassword(
+                f'The password of the ThunderBase cannot be of type {type(password)}. It mush be a string.')
 
         # Declaring the main path variable
         self.path = 'ThunderBase/'
