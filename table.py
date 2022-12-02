@@ -1,4 +1,4 @@
-# Importing the ThunderBase class.
+# Importing modules
 import os
 import hashlib
 import json
@@ -127,7 +127,7 @@ class Table:
         else:
             return False
 
-    def delete_records_by_field(self, field: dict):
+    def delete_records_by_fields(self, field: dict):
         """Deletes a single or many records based on the values provided in the given dictionary."""
 
         # A list for stroring the name[s] of deleted records.
@@ -176,3 +176,65 @@ class Table:
 
         # Returning the list of deleted records.
         return deleted_records
+
+    # Functions for searching a record based on a given value.
+    def search_record_by_id(self, id: str):
+        """Returns a record based on the given record id."""
+
+        # Checking if the record exists in directory.
+        record_path = f"{self.table_path}{id}.tbr"
+        if os.path.exists(record_path):
+            with open(record_path) as f:
+                record = json.load(f)
+            return record
+        else:
+            return False
+
+    def search_records_by_fields(self, field: dict):
+        """Returns a single or many records based on the values provided in the given dictionary."""
+
+        # A list for stroring the name[s] of deleted records.
+        returned_records = []
+
+        # Extracting the key[s] and value[s] provided.
+        keys = []
+        values = []
+        for key, value in field.items():
+            keys.append(key)
+            values.append(value)
+
+        # Scanning all the files in the record directory
+        directory = self.table_path
+        if not os.path.exists(directory):
+            raise tb_errors.TableNotFound(
+                'The table associated with the method does not exist!')
+
+        # Looping through every record and skipping the info file.
+        for record_name in os.listdir(directory):
+            if record_name == 'INFO.tbtableinfo':
+                continue
+
+            record_path = os.path.join(directory, record_name)
+
+            # Opening the file and checking if key-value pairs match the given dictionary.
+            with open(record_path) as f:
+                tbr_data = json.load(f)
+
+                counter = 0
+                ans = True
+
+                while counter < len(keys):
+                    if tbr_data[keys[counter]] == values[counter]:
+                        ans *= True
+
+                    else:
+                        ans *= False
+
+                    counter += 1
+
+            # Appending the record file if ans evaluates to true.
+            if ans:
+                returned_records.append(tbr_data)
+
+        # Returning the list of matching records.
+        return returned_records
