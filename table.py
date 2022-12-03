@@ -1,5 +1,6 @@
 # Importing modules
 import os
+import shutil
 import hashlib
 import json
 import secrets
@@ -67,6 +68,24 @@ class Table:
                     "database": self.thunderbase.dirname,
                 }
                 cf.writeInfo(self.info_file_path, info_dict)
+
+    def truncate(self):
+        """Truncates the table including all the records except the info file."""
+        table_directory = self.table_path
+        for filename in os.listdir(table_directory):
+            if filename == 'INFO.tbtableinfo':
+                continue
+            file_path = os.path.join(table_directory, filename)
+
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+
+    def delete(self):
+        """Deletes the table."""
+        db_directory = self.table_path
+        shutil.rmtree(db_directory)
 
     def add_record(self, record: dict):
         """Adds a single record to the table."""

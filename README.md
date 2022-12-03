@@ -22,6 +22,11 @@
 			- [<i>Adding a Record</i>](#adding-a-record)
 			- [<i>Deleting a Record</i>](#deleting-a-record)
 			- [<i>Searching a Record</i>](#searching-a-record)
+- [<b>Critical Operations</b>](#critical-operations)
+    - [Truncating a ThunderBase](#truncating-a-thunderbase)
+    - [Deleting a ThunderBase](#deleting-a-thunderbase)
+    - [Truncating a Table](#truncating-a-table)
+    - [Deleting a Table](#deleting-a-table)
 - [<b>Errors and Exceptions</b>](#errors-and-exceptions)
 	- [Database Errors](#database-errors)
 	- [Table Errors](#table-errors)
@@ -112,6 +117,45 @@ In this method, you pass a dictionary which specifies the criteria based on whic
 
     Table.search_records_by_fields({'name': 'Zain'})
 The above code will search and return all the records with the property `'name': 'Zain'`. This method can also take multiple criteria. Note that this method returns a list. If no record was found; it returns and empty list which evaluates to `false`.
+
+# Critical Operations
+These include operations such as truncating a ThunderBase, Table or deleting them. Let us go through each one of them.
+
+## Truncating a ThunderBase
+We use the method `ThunderBase.truncate()` to truncate a ThunderBase. If a ThunderBase exists such that:
+
+    TB = ThunderBase()
+Then, to truncate the ThunderBase, we write the following:
+
+    TB.truncate()
+This will truncate the ThunderBase meaning that all the tables which it contains except the `INFO.tbdbinfo` file.
+
+## Deleting a ThunderBase
+We use the method `ThunderBase.delete()` to delete a ThunderBase. If a ThunderBase exists such that:
+
+    TB = ThunderBase()
+Then, to delete the ThunderBase, we write the following:
+
+    TB.delete()
+This will delete the ThunderBase meaning that all the tables which it contains including itself.
+
+## Truncating a Table
+We use the method `Table.truncate()` to truncate a Table. If a Table exists such that:
+
+    table = Table(TB)
+Then, to truncate the Table, we write the following:
+
+    table.truncate()
+This will truncate the Table meaning that all the records which it contains except the `INFO.tbtableinfo` file.
+
+## Deleting a Table
+We use the method `Table.delete()` to delete a Table. If a Table exists such that:
+
+    table = Table(TB)
+Then, to delete the Table, we write the following:
+
+    table.delete()
+This will delete the Table meaning that all the records which it contains including itself.
 
 # Errors and Exceptions
 Not only does ThunderBase use Python's in-built exceptions and errors but it also has it's own custom built exceptions. Each of these exceptions is based on a base class of errors called `TBError`. Every new exception inherits the property of this class.
