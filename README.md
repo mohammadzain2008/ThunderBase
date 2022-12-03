@@ -6,6 +6,7 @@
 ![GitHub](https://img.shields.io/github/license/mohammadzain2008/ThunderBase)
 ![GitHub Repo stars](https://img.shields.io/github/stars/mohammadzain2008/ThunderBase?style=social)
 ![GitHub watchers](https://img.shields.io/github/watchers/mohammadzain2008/ThunderBase?style=social)
+
 <b>ThunderBase</b> is a new age database system which is an advanced software which can be used to do almost anything which other database management systems like SQL, MongoDB etc. can do. What makes it different from other systems is it's sole principle that, <i>"Every user has it's own database"</i>. This means that every user stores his/her data on his/her own device rather than storing it onto a common database used by millions of users. This principle has the following benefits:
 
  - A company won't need to set up their own database which prevents them from paying for the database management and overall database fee.
