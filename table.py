@@ -1,3 +1,6 @@
+"""This module is used for modelling the table of a ThunderBase."""
+# pylint score: 9.64/10
+
 # Importing modules
 import os
 import shutil
@@ -26,21 +29,22 @@ class Table:
                 'The name of the table cannot be null or empty. It must be a string.')
 
         # Checking if the name of the table is a string or not.
-        elif type(name) != str:
+        if not isinstance(name, str):
             raise tb_errors.TableNameInvalid(
                 f'The name of the table cannot be of type {type(name)}. It must be a string.')
 
         # Check if the ThunderBase exists.
-        elif not cf.isThunderBase(thunderbase):
+        if not cf.is_thunder_base(thunderbase):
             raise tb_errors.ThunderBaseNotFound('ThunderBase not found!')
 
         # Checking if the schema is empty or not.
         if not schema:
             raise tb_errors.TableSchemaEmpty(
-                'The schema of a table cannot be null or empty. It must have atleast one key-value pair.')
+                'The schema of a table cannot be null or empty.' 
+                'It must have atleast one key-value pair.')
 
         # Checking if the schema is a dict or not.
-        if type(schema) != dict:
+        if not isinstance(schema, dict):
             raise tb_errors.TableSchemaInvalid(
                 f'Table schema cannot be of type {type(schema)}. It must be of type dict.')
         # Declaring main self variables
@@ -48,8 +52,8 @@ class Table:
         self.schema = schema
         self.name = name
 
-        hash = hashlib.sha1(self.name.encode())
-        hex_digest = hash.hexdigest()
+        hashed_password = hashlib.sha1(self.name.encode())
+        hex_digest = hashed_password.hexdigest()
 
         self.db_dir = self.thunderbase.dirpath
         self.table_path = f"{self.db_dir}{self.name}+{hex_digest}/"
@@ -59,15 +63,16 @@ class Table:
             os.mkdir(self.table_path)
 
         self.info_file_path = self.table_path + 'INFO.tbtableinfo'
+
         # Checking if the info file exists.
         if not os.path.exists(self.info_file_path):
-            with open(self.info_file_path, 'w') as f:
+            with open(self.info_file_path, 'w', encoding='utf-8'):
                 info_dict = {
                     "name": self.name,
                     "schema": self.schema,
                     "database": self.thunderbase.dirname,
                 }
-                cf.writeInfo(self.info_file_path, info_dict)
+                cf.write_info(self.info_file_path, info_dict)
 
     def truncate(self):
         """Truncates the table including all the records except the info file."""
@@ -93,9 +98,10 @@ class Table:
         # Checking the given record.
         if not record:
             raise tb_errors.TableRecordEmpty(
-                'The passed record cannot be null or empty. It must contain atleast one key-value pair.')
+                'The passed record cannot be null or empty.' 
+                'It must contain atleast one key-value pair.')
         # Checking if the record is a dictionary or not.
-        if type(record) != dict:
+        if not isinstance(record, dict):
             raise tb_errors.TableRecordInvalid(
                 f'A record cannot be of type {type(record)}. It must be a dict.')
 
@@ -109,42 +115,44 @@ class Table:
         # Checking if the number of keys in both the lists are equal
         if schema_length != record_length:
             raise tb_errors.RecordFieldsIncorrect(
-                f'The number of keys in record ({record_length}) does not match the number of keys in the table schema ({schema_length})!')
+                f'The number of keys in record ({record_length})' 
+                f'does not match the number of keys in the table schema ({schema_length})!')
 
         # Checking if all the keys are equal in record and schema.
         counter = 0
         while counter < schema_length:
             if schema_keys[counter] != record_keys[counter]:
                 raise tb_errors.RecordFieldsIncorrect(
-                    f'The record should contain the keys ({schema_keys}) but contains the keys ({record_keys})')
+                    f'The record should contain the keys ({schema_keys})' 
+                    f'but contains the keys ({record_keys})')
             counter += 1
 
-        # Checking if the type of given value in the record matches the prescribed datatype in the schema.
+        # Check if type of the value in record matches the given datatype in schema.
         schema_values = list(self.schema.values())
         record_values = [type(value) for value in record.values()]
 
         if schema_values != record_values:
             raise tb_errors.RecordFieldNotOfSpecifiedType(
-                f'The record field[s] do not match the datatype ({record_values}) as defined in the corresponding key in the table schema ({schema_values}). ')
+                f'The record field[s] do not match the datatype ({record_values})' 
+                f'as defined in the corresponding key in the table schema ({schema_values}). ')
 
         # Pushing the record into the table as a .tbr file
         record_id = secrets.token_hex(16)
-        with open(f'{self.table_path}{record_id}.tbr', 'w') as f:
+        with open(f'{self.table_path}{record_id}.tbr', 'w', encoding='utf-8') as file_object:
             record['id'] = record_id
-            json.dump(record, f, indent=4)
+            json.dump(record, file_object, indent=4)
             return record['id']
 
     # Functions for deleting a record based on a given value.
-    def delete_record_by_id(self, id: str):
+    def delete_record_by_id(self, record_id: str):
         """Deletes a record based on the given record id."""
 
         # Checking if the record exists in directory.
-        record_path = f"{self.table_path}{id}.tbr"
+        record_path = f"{self.table_path}{record_id}.tbr"
         if os.path.exists(record_path):
             os.remove(record_path)
             return True
-        else:
-            return False
+        return False
 
     def delete_records_by_fields(self, field: dict):
         """Deletes a single or many records based on the values provided in the given dictionary."""
@@ -173,8 +181,8 @@ class Table:
             record_path = os.path.join(directory, record_name)
 
             # Opening the file and checking if key-value pairs match the given dictionary.
-            with open(record_path) as f:
-                tbr_data = json.load(f)
+            with open(record_path, encoding='utf-8') as file_object:
+                tbr_data = json.load(file_object)
 
                 counter = 0
                 ans = True
@@ -197,17 +205,16 @@ class Table:
         return deleted_records
 
     # Functions for searching a record based on a given value.
-    def search_record_by_id(self, id: str):
+    def search_record_by_id(self, record_id: str):
         """Returns a record based on the given record id."""
 
         # Checking if the record exists in directory.
-        record_path = f"{self.table_path}{id}.tbr"
+        record_path = f"{self.table_path}{record_id}.tbr"
         if os.path.exists(record_path):
-            with open(record_path) as f:
-                record = json.load(f)
+            with open(record_path, encoding='utf-8') as file_object:
+                record = json.load(file_object)
             return record
-        else:
-            return False
+        return False
 
     def search_records_by_fields(self, field: dict):
         """Returns a single or many records based on the values provided in the given dictionary."""
@@ -236,8 +243,8 @@ class Table:
             record_path = os.path.join(directory, record_name)
 
             # Opening the file and checking if key-value pairs match the given dictionary.
-            with open(record_path) as f:
-                tbr_data = json.load(f)
+            with open(record_path, encoding='utf-8') as file_object:
+                tbr_data = json.load(file_object)
 
                 counter = 0
                 ans = True

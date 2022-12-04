@@ -1,0 +1,15 @@
+[
+    {
+        "type": "convention",
+        "module": "database",
+        "obj": "",
+        "line": 37,
+        "column": 86,
+        "endLine": null,
+        "endColumn": null,
+        "path": "database.py",
+        "symbol": "trailing-whitespace",
+        "message": "Trailing whitespace",
+        "message-id": "C0303"
+    }
+]

@@ -3,6 +3,7 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/mohammadzain2008/ThunderBase)
 ![GitHub last commit](https://img.shields.io/github/last-commit/mohammadzain2008/ThunderBase)
 ![GitHub language count](https://img.shields.io/github/languages/count/mohammadzain2008/ThunderBase)
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
 ![GitHub](https://img.shields.io/github/license/mohammadzain2008/ThunderBase)
 ![GitHub Repo stars](https://img.shields.io/github/stars/mohammadzain2008/ThunderBase?style=social)
 ![GitHub watchers](https://img.shields.io/github/watchers/mohammadzain2008/ThunderBase?style=social)

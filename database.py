@@ -1,3 +1,6 @@
+"""The module which contains the class for creating a ThunderBase."""
+# pylint score: 9.77/10
+
 # Importing modules
 import os
 import shutil
@@ -21,7 +24,7 @@ class ThunderBase:
             raise tb_errors.ThunderBaseNameEmpty(
                 'The name of the ThunderBase cannot be null or an empty string.')
 
-        elif type(name) != str:
+        if not isinstance(name, str):
             raise tb_errors.ThunderBaseInvalidName(
                 f'The name of the ThunderBase cannot be of type {type(name)}. It must be a string.')
 
@@ -30,18 +33,19 @@ class ThunderBase:
             raise tb_errors.ThunderBasePasswordEmpty(
                 'The password of the ThunderBase cannot be null or an empty string.')
 
-        elif type(password) != str:
+        if not isinstance(password, str):
             raise tb_errors.ThunderBaseInvalidPassword(
-                f'The password of the ThunderBase cannot be of type {type(password)}. It mush be a string.')
+                f'The password of the ThunderBase cannot be of type {type(password)}.' 
+                'It mush be a string.')
 
         # Declaring the main path variable
         self.path = 'ThunderBase/'
 
         # Initializing main variables of the database.
-        hash = hashlib.sha1(password.encode())
+        hashed_password = hashlib.sha1(password.encode())
 
         self.db_name = name
-        self.password = hash.hexdigest()
+        self.password = hashed_password.hexdigest()
 
         # Creating the directory name for the database.
         self.dirname = f"{self.db_name}+{self.password}/"
@@ -59,15 +63,15 @@ class ThunderBase:
         self.tbdbinfo_path = self.dirpath + 'INFO.tbdbinfo'
 
         if not os.path.exists(self.tbdbinfo_path):
-            with open(self.tbdbinfo_path, 'w') as f:
+            with open(self.tbdbinfo_path, 'w', encoding='utf-8') as file_object:
                 info_dict = {
                     'name': self.db_name,
                     'password': self.password,
                 }
-                json.dump(info_dict, f, indent=4)
+                json.dump(info_dict, file_object, indent=4)
 
     def truncate(self):
-        """Truncates all the contents of a database including tables and records, except the info file."""
+        """Truncates all the contents of a database except the info file."""
         db_directory = self.dirpath
         for filename in os.listdir(db_directory):
             if filename == 'INFO.tbdbinfo':
@@ -78,10 +82,8 @@ class ThunderBase:
                 os.unlink(file_path)
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
-    
+
     def delete(self):
         """Deletes the ThunderBase."""
         db_directory = self.dirpath
         shutil.rmtree(db_directory)
-
-

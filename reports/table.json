@@ -1,0 +1,67 @@
+[
+    {
+        "type": "convention",
+        "module": "table",
+        "obj": "",
+        "line": 42,
+        "column": 64,
+        "endLine": null,
+        "endColumn": null,
+        "path": "table.py",
+        "symbol": "trailing-whitespace",
+        "message": "Trailing whitespace",
+        "message-id": "C0303"
+    },
+    {
+        "type": "convention",
+        "module": "table",
+        "obj": "",
+        "line": 100,
+        "column": 60,
+        "endLine": null,
+        "endColumn": null,
+        "path": "table.py",
+        "symbol": "trailing-whitespace",
+        "message": "Trailing whitespace",
+        "message-id": "C0303"
+    },
+    {
+        "type": "convention",
+        "module": "table",
+        "obj": "",
+        "line": 117,
+        "column": 65,
+        "endLine": null,
+        "endColumn": null,
+        "path": "table.py",
+        "symbol": "trailing-whitespace",
+        "message": "Trailing whitespace",
+        "message-id": "C0303"
+    },
+    {
+        "type": "convention",
+        "module": "table",
+        "obj": "",
+        "line": 125,
+        "column": 73,
+        "endLine": null,
+        "endColumn": null,
+        "path": "table.py",
+        "symbol": "trailing-whitespace",
+        "message": "Trailing whitespace",
+        "message-id": "C0303"
+    },
+    {
+        "type": "convention",
+        "module": "table",
+        "obj": "",
+        "line": 135,
+        "column": 82,
+        "endLine": null,
+        "endColumn": null,
+        "path": "table.py",
+        "symbol": "trailing-whitespace",
+        "message": "Trailing whitespace",
+        "message-id": "C0303"
+    }
+]
